@@ -1,0 +1,165 @@
+{
+    "name": "04_Data_Ingestion",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Manual Trigger",
+            "type": "n8n-nodes-base.manualTrigger",
+            "typeVersion": 1,
+            "position": [
+                250,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "filePath": "c:\\Users\\Administrator\\Desktop\\softwareengineerassessmentmanufacturingdataragsystem\\manufacturing_rag_hybrid\\data\\machine_data.csv",
+                "options": {}
+            },
+            "name": "Read CSV",
+            "type": "n8n-nodes-base.readBinaryFile",
+            "typeVersion": 1,
+            "position": [
+                450,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "jsCode": "// Parse CSV and create manufacturing-aware chunks\nconst csvData = $input.item.binary.data.toString('utf-8');\nconst lines = csvData.split(/\\r?\\n/).filter(line => line.trim() !== '');\nconst headers = lines[0].split(',').map(h => h.trim());\nconst records = lines.slice(1).map(line => {\n  const values = line.split(',');\n  const obj = {};\n  headers.forEach((header, i) => {\n    obj[header] = values[i] ? values[i].trim() : null;\n  });\n  return obj;\n});\n\nconst items = records.map(record => {\n  const chunk = {\n    timestamp: record.timestamp || new Date().toISOString(),\n    machine_id: record.machine_id || 'UNKNOWN',\n    oee: parseFloat(record.oee) || 0,\n    availability: parseFloat(record.availability) || 0,\n    performance: parseFloat(record.performance) || 0,\n    quality: parseFloat(record.quality) || 0,\n    shift: record.shift || 'DAY',\n    fault_code: record.fault_code || 'NONE',\n    content: `Machine ${record.machine_id}: OEE ${record.oee}% on shift ${record.shift}`,\n    metadata: {\n      source: 'machine_data',\n      machine_id: record.machine_id,\n      oee: parseFloat(record.oee) || 0,\n      shift: record.shift || 'DAY',\n      fault_code: record.fault_code || 'NONE'\n    }\n  };\n  return { json: chunk };\n});\n\nreturn items;"
+            },
+            "name": "Manufacturing Chunking",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [
+                650,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "batchSize": 50
+            },
+            "name": "Split In Batches",
+            "type": "n8n-nodes-base.splitInBatches",
+            "typeVersion": 3,
+            "position": [
+                850,
+                300
+            ]
+        },
+        {
+            "parameters": {
+                "resource": "embedding",
+                "model": "text-embedding-3-small",
+                "input": "={{ $json.query || $json.text || $json.summary }}"
+            },
+            "name": "Generate OpenAI Embedding",
+            "type": "n8n-nodes-base.openAi",
+            "typeVersion": 1,
+            "position": [
+                1050,
+                300
+            ],
+            "id": "openai-embed-generate-embeddings",
+            "credentials": {
+                "openAiApi": {
+                    "id": "pwVOuoAYCD20Dv67",
+                    "name": "OpenAi account"
+                }
+            }
+        },
+        {
+            "parameters": {
+                "url": "https://manufacturing-rag-96ag0kp.svc.aped-4627-b74a.pinecone.io/vectors/upsert",
+                "method": "POST",
+                "authentication": "predefinedCredentialType",
+                "nodeCredentialType": "pineconeApi",
+                "jsonParameters": true,
+                "options": {
+                    "timeout": 15000
+                },
+                "bodyParametersJson": "={\n  \"vectors\": [{\n    \"id\": \"{{$json.machine_id}}_{{$json.timestamp_start}}\",\n    \"values\": {{$json.embedding}},\n    \"metadata\": {\n      \"text\": \"{{$json.text}}\",\n      \"machine_id\": \"{{$json.machine_id}}\",\n      \"date\": \"{{$json.date}}\",\n      \"shift\": \"{{$json.shift}}\",\n      \"avg_oee\": {{$json.avg_oee}}\n    }\n  }]\n}"
+            },
+            "name": "Upsert to Pinecone",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4,
+            "position": [
+                1250,
+                300
+            ]
+        }
+    ],
+    "connections": {
+        "Manual Trigger": {
+            "main": [
+                [
+                    {
+                        "node": "Read CSV",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Read CSV": {
+            "main": [
+                [
+                    {
+                        "node": "Manufacturing Chunking",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Manufacturing Chunking": {
+            "main": [
+                [
+                    {
+                        "node": "Split In Batches",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Split In Batches": {
+            "main": [
+                [
+                    {
+                        "node": "Generate OpenAI Embedding",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Upsert to Pinecone": {
+            "main": [
+                [
+                    {
+                        "node": "Split In Batches",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        },
+        "Generate OpenAI Embedding": {
+            "main": [
+                [
+                    {
+                        "node": "Upsert to Pinecone",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "settings": {
+        "saveExecutionProgress": true,
+        "saveManualExecutions": true
+    }
+}

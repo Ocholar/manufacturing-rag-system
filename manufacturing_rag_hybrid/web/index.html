@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0F172A">
+    <title>DakrIQ - Factory Intelligence Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect x="4" y="4" width="32" height="32" rx="8" fill="url(#gradient1)" />
+                        <path d="M12 16L20 12L28 16V28L20 32L12 28V16Z" stroke="white" stroke-width="2"
+                            stroke-linejoin="round" />
+                        <circle cx="20" cy="20" r="3" fill="white" />
+                        <defs>
+                            <linearGradient id="gradient1" x1="4" y1="4" x2="36" y2="36">
+                                <stop offset="0%" stop-color="#3B82F6" />
+                                <stop offset="100%" stop-color="#1E40AF" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>DakrIQ</h1>
+                    <p>Dakri Cartons Factory Intelligence</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>System Online</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Chat Container -->
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome Message -->
+                    <div class="message bot-message">
+                        <div class="message-content">
+                            <div class="message-header">
+                                <span class="bot-label">DakrIQ Assistant</span>
+                                <span class="timestamp" id="welcomeTime"></span>
+                            </div>
+                            <div class="message-text">
+                                <p>👋 Welcome to <strong>DakrIQ</strong> - Your intelligent factory assistant powered by
+                                    RAG and predictive analytics.</p>
+                                <p>I can help you with:</p>
+                                <ul>
+                                    <li>📊 Machine performance analysis (OEE, speed, efficiency)</li>
+                                    <li>⚠️ Fault investigation and downtime reports</li>
+                                    <li>📈 Inventory forecasting and procurement recommendations</li>
+                                    <li>🔍 Operational insights and trend analysis</li>
+                                </ul>
+                                <p>Try asking a question below!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Queries -->
+                <div class="example-queries" id="exampleQueries">
+                    <h3>Quick Examples:</h3>
+                    <div class="query-chips">
+                        <button class="query-chip" data-query="What was the average OEE for MC001 yesterday?">
+                            <span>📊</span> MC001 OEE Yesterday
+                        </button>
+                        <button class="query-chip" data-query="Forecast Flute 1700mm for next 7 days">
+                            <span>📈</span> Forecast Flute 1700mm
+                        </button>
+                        <button class="query-chip" data-query="What were the main faults on MC002 this week?">
+                            <span>⚠️</span> MC002 Fault Analysis
+                        </button>
+                        <button class="query-chip" data-query="Show me production trends for all machines">
+                            <span>🔍</span> Production Trends
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-container">
+                    <div class="input-wrapper">
+                        <textarea id="userInput"
+                            placeholder="Ask about machine performance, inventory forecasts, or operational insights..."
+                            rows="1"></textarea>
+                        <button class="send-button" id="sendButton">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 2L11 13M22 2L15 22L11 13M22 2L2 8L11 13" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="input-footer">
+                        <span class="powered-by">Powered by n8n RAG + LM Studio (Llama 3)</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
