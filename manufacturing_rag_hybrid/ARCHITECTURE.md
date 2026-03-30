@@ -48,7 +48,7 @@ graph TD
 
 ## Component Architecture
 
-### 1. Unified Orchestrator (`00_Complete_Chat_AllInOne.json`)
+### 1. Unified Orchestrator (`Complete_Chat_AllInOne.json`)
 **Responsibility**: manages the entire user lifecycle from query to response.
 
 **Key Features**:
@@ -56,7 +56,7 @@ graph TD
 - **Holt-Winters Forecasting**: Pure JavaScript implementation of Triple Exponential Smoothing with 95% confidence intervals.
 - **Resilient Embedding extraction**: Bypasses n8n-specific node bugs by using direct HTTP calls to OpenAI and custom extraction logic to ensure a valid 768-dimension vector is always sent to Pinecone.
 
-### 2. Data Ingestion Pipeline (`04_Data_Ingestion.json`)
+### 2. Data Ingestion Pipeline (`Data_Ingestion.json`)
 **Responsibility**: Converts raw manufacturing CSV logs into domain-optimized vector embeddings.
 
 **Strategy**:
