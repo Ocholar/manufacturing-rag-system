@@ -2,7 +2,7 @@
 
 > **A Production-Ready, Visual Orchestration System for Manufacturing Intelligence.**
 
-This system leverages **n8n orchestration**, **Pinecone vector search**, and **GPT-4o-mini** to provide real-time manufacturing insights and advanced inventory forecasting—all without external Python dependencies.
+This system leverages **n8n orchestration**, **Pinecone vector search**, and **GPT-4o-mini** to provide real-time manufacturing insights and advanced inventory forecasting.
 
 ---
 
